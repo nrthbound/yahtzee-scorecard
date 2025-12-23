@@ -1,17 +1,11 @@
 <script lang="ts">
   import LowerRow, { type LowerValue } from "./LowerRow.svelte";
   import { calculateLower } from "$lib/scoring";
+  import { gameState, updateLowerCategory } from "$lib/stores/gameStore";
 
-  const lower = $state<Record<string, LowerValue>>({
-    threeOfAKind: null,
-    fourOfAKind: null,
-    fullHouse: null,
-    smallStraight: null,
-    largeStraight: null,
-    yahtzee: null,
-    chance: null,
-  });
-
+  // Get state from store using runes
+  const state = $derived($gameState);
+  const lower = $derived(state.lower);
   const lowerTotal = $derived(calculateLower(lower));
 </script>
 
@@ -23,14 +17,14 @@
       label="Three of a Kind"
       inputType="number"
       value={lower.threeOfAKind}
-      onChange={(v) => lower.threeOfAKind = v}
+      onChange={(v) => updateLowerCategory('threeOfAKind', v)}
     />
 
     <LowerRow
       label="Four of a Kind"
       inputType="number"
       value={lower.fourOfAKind}
-      onChange={(v) => lower.fourOfAKind = v}
+      onChange={(v) => updateLowerCategory('fourOfAKind', v)}
     />
 
     <LowerRow
@@ -38,7 +32,7 @@
       inputType="checkbox"
       fixedValue={25}
       value={lower.fullHouse}
-      onChange={(v) => lower.fullHouse = v}
+      onChange={(v) => updateLowerCategory('fullHouse', v)}
     />
 
     <LowerRow
@@ -46,7 +40,7 @@
       inputType="checkbox"
       fixedValue={30}
       value={lower.smallStraight}
-      onChange={(v) => lower.smallStraight = v}
+      onChange={(v) => updateLowerCategory('smallStraight', v)}
     />
 
     <LowerRow
@@ -54,7 +48,7 @@
       inputType="checkbox"
       fixedValue={40}
       value={lower.largeStraight}
-      onChange={(v) => lower.largeStraight = v}
+      onChange={(v) => updateLowerCategory('largeStraight', v)}
     />
 
     <LowerRow
@@ -62,21 +56,21 @@
       inputType="checkbox"
       fixedValue={50}
       value={lower.yahtzee}
-      onChange={(v) => lower.yahtzee = v}
+      onChange={(v) => updateLowerCategory('yahtzee', v)}
     />
 
     <LowerRow
       label="Chance"
       inputType="number"
       value={lower.chance}
-      onChange={(v) => lower.chance = v}
+      onChange={(v) => updateLowerCategory('chance', v)}
     />
   </div>
 
   <!-- TODO: Add lower section totals and Yahtzee bonus section -->
   <div class="mt-6 pt-4 border-t border-gray-300">
     <div class="text-sm text-gray-600">
-      <!-- Lower section total will go here -->
+      Lower Total: {lowerTotal}
       <!-- Yahtzee bonus section will go here -->
     </div>
   </div>

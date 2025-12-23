@@ -41,3 +41,14 @@ export function calculateLower(lower: Record<string, LowerValue>) {
   return total;
 }
 
+export function calculateGrandTotal(upper: Record<string, UpperValue>, lower: Record<string, LowerValue>) {
+  const upperResult = calculateUpper(upper);
+  const lowerTotal = calculateLower(lower);
+  
+  return {
+    upperTotal: upperResult.total,
+    lowerTotal: lowerTotal,
+    grandTotal: upperResult.total + lowerTotal
+  };
+}
+

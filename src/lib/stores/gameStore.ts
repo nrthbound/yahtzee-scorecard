@@ -1,0 +1,95 @@
+import { writable } from 'svelte/store';
+import type { UpperValue } from '$lib/components/UpperRow.svelte';
+import type { LowerValue } from '$lib/components/LowerRow.svelte';
+
+export interface GameState {
+  // Upper section state
+  upper: {
+    ones: UpperValue;
+    twos: UpperValue;
+    threes: UpperValue;
+    fours: UpperValue;
+    fives: UpperValue;
+    sixes: UpperValue;
+  };
+
+  // Lower section state
+  lower: {
+    threeOfAKind: LowerValue;
+    fourOfAKind: LowerValue;
+    fullHouse: LowerValue;
+    smallStraight: LowerValue;
+    largeStraight: LowerValue;
+    yahtzee: LowerValue;
+    chance: LowerValue;
+  };
+
+  // Future game metadata
+  gameId?: string;
+  playerId?: string;
+  playerName?: string;
+  createdAt?: Date;
+  yahtzeBonusCount?: number;
+}
+
+// Initial state - all categories start as null (unplayed)
+const initialState: GameState = {
+  upper: {
+    ones: null,
+    twos: null,
+    threes: null,
+    fours: null,
+    fives: null,
+    sixes: null,
+  },
+  lower: {
+    threeOfAKind: null,
+    fourOfAKind: null,
+    fullHouse: null,
+    smallStraight: null,
+    largeStraight: null,
+    yahtzee: null,
+    chance: null,
+  },
+  yahtzeBonusCount: 0,
+};
+
+// Create the writable store
+export const gameState = writable<GameState>(initialState);
+
+// Helper functions for updating specific parts of the state
+export const updateUpperCategory = (category: keyof GameState['upper'], value: UpperValue) => {
+  gameState.update(state => ({
+    ...state,
+    upper: {
+      ...state.upper,
+      [category]: value
+    }
+  }));
+};
+
+export const updateLowerCategory = (category: keyof GameState['lower'], value: LowerValue) => {
+  gameState.update(state => ({
+    ...state,
+    lower: {
+      ...state.lower,
+      [category]: value
+    }
+  }));
+};
+
+// Reset game state (useful for new games)
+export const resetGame = () => {
+  gameState.set(initialState);
+};
+
+// Set game metadata (when joining/creating games)
+export const setGameInfo = (gameId: string, playerId: string, playerName: string) => {
+  gameState.update(state => ({
+    ...state,
+    gameId,
+    playerId,
+    playerName,
+    createdAt: new Date()
+  }));
+};
