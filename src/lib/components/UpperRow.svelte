@@ -4,8 +4,6 @@
 
 <script lang="ts">
 
-  import type { UpperValue } from "./UpperRow.svelte";
-
   const {label, faceValue, value, onChange} = $props<{
     label: string;
     faceValue: number;
@@ -13,37 +11,69 @@
     onChange: (v: UpperValue) => void;
   }>()
 
+  // Generate unique name for this radio group
+  const radioGroupName = $derived(`upper-${faceValue}`);
 
-  function handleChange(e: Event) {
-    const select = e.currentTarget as HTMLSelectElement;
-    const raw = select.value;
-
-    const parsed: UpperValue =
-      raw === 'scratch' ? 'scratch' :
-      raw === '' ? null :
-      Number(raw);
-
-    onChange(parsed);
+  function handleChange(newValue: UpperValue) {
+    onChange(newValue);
   }
 
   const score = $derived(
-    () =>
-      value === 'scratch' ? 0 :
-      value === null ? 0 :
-      value * faceValue
+    value === 'scratch' ? 0 :
+    value === null ? 0 :
+    value * faceValue
   )
 </script>
 
-<tr>
-  <td>{label}</td>
-  <td>{score}</td>
-  <td>
-    <select onchange={handleChange}>
-      <option value="">—</option>
-      <option value="scratch">Scratch</option>
-      {#each [0,1,2,3,4,5] as n}
-        <option value={n} selected={value === n}>{n}</option>
-      {/each}
-    </select>
-  </td>
-</tr>
+<div class="row grid grid-cols-[1fr_2fr_1fr] gap-4 items-center border-b border-gray-200/60 pb-2 mb-2">
+  <div class="">
+    {label}
+  </div>
+  <div class="flex gap-1">
+    <!-- Number buttons -->
+    {#each [0,1,2,3,4,5] as n}
+      <label class="cursor-pointer">
+        <input
+          type="radio"
+          name={radioGroupName}
+          value={n}
+          checked={value === n}
+          onchange={() => handleChange(n)}
+          class="sr-only"
+        />
+        <div class="w-8 h-8 rounded border-2 flex items-center justify-center text-sm font-medium transition-colors {
+          value === n
+            ? 'border-blue-500 bg-blue-50 text-blue-700'
+            : 'border-gray-300 bg-white hover:border-gray-400'
+        }">
+          {n}
+        </div>
+      </label>
+    {/each}
+    <!-- Scratch button -->
+    <label class="cursor-pointer">
+      <input
+        type="radio"
+        name={radioGroupName}
+        value="scratch"
+        checked={value === 'scratch'}
+        onchange={() => handleChange('scratch')}
+        class="sr-only"
+      />
+      <div class="w-8 h-8 rounded border-2 flex items-center justify-center text-sm font-medium transition-colors {
+        value === 'scratch'
+          ? 'border-red-500 bg-red-50 text-red-700'
+          : 'border-gray-300 bg-white hover:border-gray-400'
+      }">
+        /
+      </div>
+    </label>
+  </div>
+  <div class="score">
+    <div class="bg-gray-200 inline-flex w-10 h-10 justify-center items-center rounded-md">
+      {score}
+    </div>
+  </div>
+</div>
+
+
