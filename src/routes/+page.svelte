@@ -4,6 +4,7 @@
   import { createGame, joinGame, saveGameState } from "$lib/gameSync";
   import { gameState } from "$lib/stores/gameStore";
 
+
   // @ts-ignore - Svelte 5 runes
   let playerName = 'Travis';
   // @ts-ignore - Svelte 5 runes
