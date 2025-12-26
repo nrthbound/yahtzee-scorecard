@@ -59,23 +59,41 @@ export const gameState = writable<GameState>(initialState);
 
 // Helper functions for updating specific parts of the state
 export const updateUpperCategory = (category: keyof GameState['upper'], value: UpperValue) => {
-  gameState.update(state => ({
-    ...state,
-    upper: {
-      ...state.upper,
-      [category]: value
+  gameState.update(state => {
+    const newState = {
+      ...state,
+      upper: {
+        ...state.upper,
+        [category]: value
+      }
+    };
+    // Auto-save if we have game info
+    if (newState.gameId && newState.playerName) {
+      import('$lib/gameSync').then(({ saveGameState }) => {
+        saveGameState(newState);
+      });
     }
-  }));
+    return newState;
+  });
 };
 
 export const updateLowerCategory = (category: keyof GameState['lower'], value: LowerValue) => {
-  gameState.update(state => ({
-    ...state,
-    lower: {
-      ...state.lower,
-      [category]: value
+  gameState.update(state => {
+    const newState = {
+      ...state,
+      lower: {
+        ...state.lower,
+        [category]: value
+      }
+    };
+    // Auto-save if we have game info
+    if (newState.gameId && newState.playerName) {
+      import('$lib/gameSync').then(({ saveGameState }) => {
+        saveGameState(newState);
+      });
     }
-  }));
+    return newState;
+  });
 };
 
 // Reset game state (useful for new games)

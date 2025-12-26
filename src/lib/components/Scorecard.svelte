@@ -1,6 +1,8 @@
 <script lang="ts">
   import UpperSection from "$lib/components/UpperSection.svelte";
   import LowerSection from "$lib/components/LowerSection.svelte";
+  import PlayerList from "$lib/components/PlayerList.svelte";
+  import YahtzeeBonus from "$lib/components/YahtzeeBonus.svelte";
   import { calculateGrandTotal } from "$lib/scoring";
   import { gameState } from "$lib/stores/gameStore";
 
@@ -24,7 +26,7 @@
   const displayGameId = $derived(state.gameId || gameId);
 </script>
 
-<div class="scorecard-container max-w-4xl mx-auto p-6 space-y-8">
+<div class="scorecard-container max-w-6xl mx-auto p-6 space-y-8">
   <!-- Player Header -->
   <div class="text-center">
     <h1 class="text-3xl font-bold text-gray-900 mb-2">Yahtzee Scorecard</h1>
@@ -34,21 +36,34 @@
     {/if}
   </div>
 
-  <!-- Scorecard Sections -->
+  <!-- Main Content Grid -->
   <div class="grid lg:grid-cols-2 gap-8">
-    <!-- Upper Section -->
-    <div>
-      <UpperSection />
+    <!-- Scorecard Sections -->
+    <!-- <div class="lg:col-span-2 grid lg:grid-cols-2 gap-8"> -->
+    <div class="flex flex-col">
+      <!-- Upper Section -->
+      <div>
+        <UpperSection />
+      </div>
+
+      <!-- Lower Section -->
+      <div>
+        <LowerSection />
+      </div>
+
+      <div>
+        <YahtzeeBonus />
+      </div>
     </div>
 
-    <!-- Lower Section -->
-    <div>
-      <LowerSection />
+    <!-- Sidebar with Player List -->
+    <div class="space-y-6">
+      <PlayerList />
     </div>
   </div>
 
   <!-- Grand Total Display -->
-  <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border-2 border-blue-200">
+  <div class="bg-linear-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border-2 border-blue-200">
     <div class="grid grid-cols-3 gap-4 text-center">
       <div>
         <p class="text-sm font-medium text-gray-600">Upper Total</p>
@@ -60,10 +75,8 @@
       </div>
       <div>
         <p class="text-sm font-medium text-gray-600">Grand Total</p>
-        <p class="text-3xl font-bold text-indigo-700">{totals.grandTotal}</p>
+        <p class="text-3xl font-bold text-indigo-700">{totals.grandTotal + (state.yahtzeBonusCount || 0) * 100}</p>
       </div>
     </div>
   </div>
-
-  <!-- TODO: Add Yahtzee bonus section here -->
 </div>

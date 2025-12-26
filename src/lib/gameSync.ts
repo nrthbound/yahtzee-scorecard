@@ -1,6 +1,56 @@
 import { supabase } from '$lib/supabase';
 import { gameState, setGameInfo } from '$lib/stores/gameStore';
 import type { GameState } from '$lib/stores/gameStore';
+import type { RealtimeChannel } from '@supabase/supabase-js';
+
+// Global subscription reference
+let gameSubscription: RealtimeChannel | null = null;
+
+// Development logging helper
+const log = (message: string, data?: unknown) => {
+  if (import.meta.env.DEV) {
+    console.log(message, data);
+  }
+};
+
+// Set up real-time subscription for game updates
+export function setupGameSubscription(gameId: string, playerName: string) {
+  // Clean up existing subscription
+  if (gameSubscription) {
+    gameSubscription.unsubscribe();
+  }
+
+  gameSubscription = supabase
+    .channel(`game-${gameId}`)
+    .on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: 'game_scores',
+        filter: `game_id=eq.${gameId}`
+      },
+      (payload) => {
+        log('🔄 Real-time update received:', payload);
+        // Only update if the change is from another player
+        if (payload.new && typeof payload.new === 'object' && 'player_name' in payload.new && payload.new.player_name !== playerName) {
+          loadGameState(gameId, playerName);
+        }
+      }
+    )
+    .subscribe();
+
+  log('🔔 Real-time subscription setup for game:', gameId);
+}
+
+// Clean up subscription
+export function cleanupGameSubscription() {
+  if (gameSubscription) {
+    gameSubscription.unsubscribe();
+    gameSubscription = null;
+    log('🔕 Game subscription cleaned up');
+  }
+}
 
 // Create a new game session
 export async function createGame(createdBy: string) {
@@ -40,11 +90,14 @@ export async function createGame(createdBy: string) {
     // Update local store with game info
     setGameInfo(gameData.id, crypto.randomUUID(), createdBy);
 
-    console.log('✅ Game created:', gameData.id);
+    // Setup real-time subscription
+    setupGameSubscription(gameData.id, createdBy);
+
+    log('✅ Game created:', gameData.id);
     return gameData.id;
 
   } catch (error) {
-    console.error('❌ Failed to create game:', error);
+    log('❌ Failed to create game:', error);
     throw error;
   }
 }
@@ -52,7 +105,7 @@ export async function createGame(createdBy: string) {
 // Join an existing game
 export async function joinGame(gameId: string, playerName: string) {
   try {
-    console.log('🔍 Attempting to join game:', { gameId, playerName });
+    log('🔍 Attempting to join game:', { gameId, playerName });
 
     // Check if game exists and is active
     const { data: gameData, error: gameError } = await supabase
@@ -63,7 +116,7 @@ export async function joinGame(gameId: string, playerName: string) {
       .single();
 
     if (gameError) {
-      console.error('❌ Game query error:', gameError);
+      log('❌ Game query error:', gameError);
       throw new Error(`Game not found: ${gameError.message}`);
     }
 
@@ -71,7 +124,7 @@ export async function joinGame(gameId: string, playerName: string) {
       throw new Error('Game not found or not active');
     }
 
-    console.log('✅ Game found:', gameData);
+    log('✅ Game found:', gameData);
 
     // Add player to game (or update if already exists)
     const { error: playerError } = await supabase
@@ -85,11 +138,11 @@ export async function joinGame(gameId: string, playerName: string) {
       });
 
     if (playerError) {
-      console.error('❌ Player insert error:', playerError);
+      log('❌ Player insert error:', playerError);
       throw new Error(`Failed to add player: ${playerError.message}`);
     }
 
-    console.log('✅ Player added/updated');
+    log('✅ Player added/updated');
 
     // Check if score record already exists
     const { data: existingScore, error: checkError } = await supabase
@@ -100,13 +153,13 @@ export async function joinGame(gameId: string, playerName: string) {
       .single();
 
     if (checkError && checkError.code !== 'PGRST116') { // PGRST116 = not found, which is OK
-      console.error('❌ Score check error:', checkError);
+      log('❌ Score check error:', checkError);
       throw new Error(`Failed to check existing scores: ${checkError.message}`);
     }
 
     // Only create initial score record if it doesn't exist
     if (!existingScore) {
-      console.log('🆕 Creating new score record');
+      log('🆕 Creating new score record');
       const { error: scoreError } = await supabase
         .from('game_scores')
         .insert({
@@ -116,11 +169,11 @@ export async function joinGame(gameId: string, playerName: string) {
         });
 
       if (scoreError) {
-        console.error('❌ Score insert error:', scoreError);
+        log('❌ Score insert error:', scoreError);
         throw new Error(`Failed to create score record: ${scoreError.message}`);
       }
     } else {
-      console.log('✅ Score record already exists, skipping creation');
+      log('✅ Score record already exists, skipping creation');
     }
 
     // Update local store
@@ -129,11 +182,14 @@ export async function joinGame(gameId: string, playerName: string) {
     // Load existing game state for this player
     await loadGameState(gameId, playerName);
 
-    console.log('✅ Joined game:', gameId);
+    // Setup real-time subscription
+    setupGameSubscription(gameId, playerName);
+
+    log('✅ Joined game:', gameId);
     return gameId;
 
   } catch (error) {
-    console.error('❌ Failed to join game:', error);
+    log('❌ Failed to join game:', error);
     throw error;
   }
 }
@@ -141,7 +197,7 @@ export async function joinGame(gameId: string, playerName: string) {
 // Load game state from database
 export async function loadGameState(gameId: string, playerName: string) {
   try {
-    console.log('🔍 Loading game state for:', { gameId, playerName });
+    log('🔍 Loading game state for:', { gameId, playerName });
 
     const { data, error } = await supabase
       .from('game_scores')
@@ -151,12 +207,12 @@ export async function loadGameState(gameId: string, playerName: string) {
       .single();
 
     if (error && error.code !== 'PGRST116') { // Not found is OK for new games
-      console.error('❌ Load game state error:', error);
+      log('❌ Load game state error:', error);
       throw error;
     }
 
     if (data) {
-      console.log('📊 Raw database data:', data);
+      log('📊 Raw database data:', data);
 
       // Handle scratched categories
       const scratchedCategories = data.scratched_categories || [];
@@ -194,11 +250,11 @@ export async function loadGameState(gameId: string, playerName: string) {
 
       console.log('✅ Game state loaded and updated');
     } else {
-      console.log('ℹ️ No existing game state found (new player)');
+      log('ℹ️ No existing game state found (new player)');
     }
 
   } catch (error) {
-    console.error('❌ Failed to load game state:', error);
+    log('❌ Failed to load game state:', error);
     throw error;
   }
 }
@@ -206,7 +262,7 @@ export async function loadGameState(gameId: string, playerName: string) {
 // Save current game state to database
 export async function saveGameState(state: GameState) {
   if (!state.gameId || !state.playerName) {
-    console.warn('No game ID or player name, skipping save');
+    log('No game ID or player name, skipping save');
     return;
   }
 
@@ -260,10 +316,58 @@ export async function saveGameState(state: GameState) {
 
     if (error) throw error;
 
-    console.log('✅ Game state saved');
+    log('✅ Game state saved');
 
   } catch (error) {
-    console.error('❌ Failed to save game state:', error);
+    log('❌ Failed to save game state:', error);
     // Don't throw - we don't want to break the UI for save failures
+  }
+}
+
+// Fetch all players and their scores for a game
+export async function fetchGamePlayers(gameId: string) {
+  try {
+    // First get all players for the game
+    const { data: playersData, error: playersError } = await supabase
+      .from('game_players')
+      .select('player_name, joined_at')
+      .eq('game_id', gameId)
+      .order('joined_at');
+
+    if (playersError) throw playersError;
+
+    if (!playersData || playersData.length === 0) {
+      return [];
+    }
+
+    // Then get all scores for these players in this game
+    const { data: scoresData, error: scoresError } = await supabase
+      .from('game_scores')
+      .select(`
+        player_name,
+        ones, twos, threes, fours, fives, sixes,
+        three_of_a_kind, four_of_a_kind, full_house,
+        small_straight, large_straight, yahtzee, chance,
+        yahtzee_bonus_count, scratched_categories
+      `)
+      .eq('game_id', gameId);
+
+    if (scoresError) throw scoresError;
+
+    // Combine the data
+    const result = playersData.map(player => {
+      const playerScores = scoresData?.find(score => score.player_name === player.player_name);
+      return {
+        player_name: player.player_name,
+        joined_at: player.joined_at,
+        scores: playerScores || {}
+      };
+    });
+
+    return result;
+
+  } catch (error) {
+    log('❌ Failed to fetch game players:', error);
+    throw error;
   }
 }
