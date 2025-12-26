@@ -45,7 +45,9 @@
           value === n
             ? 'border-blue-500 bg-blue-50 text-blue-700'
             : 'border-gray-300 bg-white hover:border-gray-400'
-        }">
+          } {
+            n === 0 ? 'text-gray-400 border-gray-400 bg-gray-400/20' : ''
+          }">
           {n}
         </div>
       </label>
