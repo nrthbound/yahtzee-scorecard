@@ -63,19 +63,19 @@
   </div>
 
   <!-- Grand Total Display -->
-  <div class="sticky bottom-5 max-w-2xl mx-auto bg-linear-to-r from-blue-50 to-indigo-50 rounded-lg p-2 sm:p-6 border border-blue-200">
+  <div class="sticky bottom-0 max-w-2xl mx-auto rounded-t-lg p-2 sm:p-6 border bg-primary/20 border-primary">
     <div class="grid grid-cols-3 sm:gap-4 text-center">
       <div>
         <p class="text-sm font-medium text-gray-600">Upper Total</p>
-        <p class="text-lg sm:text-2xl font-bold text-blue-600">{totals.upperTotal}</p>
+        <p class="text-lg sm:text-2xl font-bold text-primary">{totals.upperTotal}</p>
       </div>
       <div>
         <p class="text-sm font-medium text-gray-600">Lower Total</p>
-        <p class="text-lg sm:text-2xl font-bold text-blue-600">{totals.lowerTotal}</p>
+        <p class="text-lg sm:text-2xl font-bold text-primary">{totals.lowerTotal}</p>
       </div>
       <div>
         <p class="text-sm font-medium text-gray-600">Grand Total</p>
-        <p class="text-lg sm:text-2xl font-bold text-indigo-700">{totals.grandTotal + (state.yahtzeBonusCount || 0) * 100}</p>
+        <p class="text-lg sm:text-2xl font-bold text-primary">{totals.grandTotal + (state.yahtzeBonusCount || 0) * 100}</p>
       </div>
     </div>
   </div>

@@ -1,6 +1,11 @@
 @import 'tailwindcss';
-@plugin '@tailwindcss/forms';
+/* @plugin '@tailwindcss/forms'; */
 @plugin '@tailwindcss/typography';
+
+@theme {
+  --color-primary: #FBB969;
+  --color-primary-dark: #A05800;
+}
 
 * {
   font-family: 'Poppins', sans-serif;

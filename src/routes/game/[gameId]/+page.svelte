@@ -114,11 +114,11 @@
   {:else}
     <div class="flex items-center justify-center min-h-screen">
       <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full mx-4 text-center">
-        <h1 class="text-2xl font-bold mb-4 text-red-600">Game Not Found</h1>
-        <p class="text-gray-600 mb-6">The game "{gameId}" could not be found or is no longer active.</p>
+        <h1 class="text-2xl font-bold mb-4 text-primary">Game Not Found</h1>
+        <p class="text-gray-600 mb-6">The game <strong>"{gameId}"</strong> could not be found or is no longer active.</p>
         <button
           onclick={() => goto('/')}
-          class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          class="text-sm/6 font-semibold bg-gray-900 hover:bg-gray-900/80  text-white px-3 py-2 rounded-md cursor-pointer"
         >
           Go Home
         </button>

@@ -47,7 +47,7 @@ export async function testSupabaseConnection() {
     if (scoreError) throw scoreError;
     console.log('✅ Score record created:', scoreData);
 
-    console.log('🎯 All tests passed! Supabase is ready.');
+    console.log('All tests passed! Supabase is ready.');
     return gameData.id;
 
   } catch (error) {

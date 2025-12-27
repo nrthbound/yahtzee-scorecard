@@ -31,7 +31,7 @@ export function setupGameSubscription(gameId: string, playerName: string) {
         filter: `game_id=eq.${gameId}`
       },
       (payload) => {
-        log('🔄 Real-time update received:', payload);
+        log('Real-time update received:', payload);
         // Only update if the change is from another player
         if (payload.new && typeof payload.new === 'object' && 'player_name' in payload.new && payload.new.player_name !== playerName) {
           loadGameState(gameId, playerName);
@@ -40,7 +40,7 @@ export function setupGameSubscription(gameId: string, playerName: string) {
     )
     .subscribe();
 
-  log('🔔 Real-time subscription setup for game:', gameId);
+  log('Real-time subscription setup for game:', gameId);
 }
 
 // Clean up subscription
@@ -48,7 +48,7 @@ export function cleanupGameSubscription() {
   if (gameSubscription) {
     gameSubscription.unsubscribe();
     gameSubscription = null;
-    log('🔕 Game subscription cleaned up');
+    log('Game subscription cleaned up');
   }
 }
 
@@ -147,7 +147,7 @@ export async function createGame(createdBy: string, customGameId?: string) {
     return gameData.id;
 
   } catch (error) {
-    log('❌ Failed to create game:', error);
+    log('Failed to create game:', error);
     throw error;
   }
 }
@@ -155,7 +155,7 @@ export async function createGame(createdBy: string, customGameId?: string) {
 // Join an existing game
 export async function joinGame(gameId: string, playerName: string) {
   try {
-    log('🔍 Attempting to join game:', { gameId, playerName });
+    log('Attempting to join game:', { gameId, playerName });
 
     // Check if game exists and is active
     const { data: gameData, error: gameError } = await supabase
@@ -166,7 +166,7 @@ export async function joinGame(gameId: string, playerName: string) {
       .single();
 
     if (gameError) {
-      log('❌ Game query error:', gameError);
+      log('Game query error:', gameError);
       throw new Error(`Game not found: ${gameError.message}`);
     }
 
@@ -174,7 +174,7 @@ export async function joinGame(gameId: string, playerName: string) {
       throw new Error('Game not found or not active');
     }
 
-    log('✅ Game found:', gameData);
+    log('Game found:', gameData);
 
     // Add player to game (or update if already exists)
     const { error: playerError } = await supabase
@@ -188,12 +188,11 @@ export async function joinGame(gameId: string, playerName: string) {
       });
 
     if (playerError) {
-      log('❌ Player insert error:', playerError);
+      log('Player insert error:', playerError);
       throw new Error(`Failed to add player: ${playerError.message}`);
     }
 
-    log('✅ Player added/updated');
-
+    log('Player added/updated');
     // Check if score record already exists
     const { data: existingScore, error: checkError } = await supabase
       .from('game_scores')
@@ -203,7 +202,7 @@ export async function joinGame(gameId: string, playerName: string) {
       .single();
 
     if (checkError && checkError.code !== 'PGRST116') { // PGRST116 = not found, which is OK
-      log('❌ Score check error:', checkError);
+      log('Score check error:', checkError);
       throw new Error(`Failed to check existing scores: ${checkError.message}`);
     }
 
@@ -219,11 +218,11 @@ export async function joinGame(gameId: string, playerName: string) {
         });
 
       if (scoreError) {
-        log('❌ Score insert error:', scoreError);
+        log('Score insert error:', scoreError);
         throw new Error(`Failed to create score record: ${scoreError.message}`);
       }
     } else {
-      log('✅ Score record already exists, skipping creation');
+      log('Score record already exists, skipping creation');
     }
 
     // Update local store
@@ -239,7 +238,7 @@ export async function joinGame(gameId: string, playerName: string) {
     return gameId;
 
   } catch (error) {
-    log('❌ Failed to join game:', error);
+    log('Failed to join game:', error);
     throw error;
   }
 }
@@ -247,7 +246,7 @@ export async function joinGame(gameId: string, playerName: string) {
 // Load game state from database
 export async function loadGameState(gameId: string, playerName: string) {
   try {
-    log('🔍 Loading game state for:', { gameId, playerName });
+    log('Loading game state for:', { gameId, playerName });
 
     const { data, error } = await supabase
       .from('game_scores')
@@ -257,12 +256,12 @@ export async function loadGameState(gameId: string, playerName: string) {
       .single();
 
     if (error && error.code !== 'PGRST116') { // Not found is OK for new games
-      log('❌ Load game state error:', error);
+      log('Load game state error:', error);
       throw error;
     }
 
     if (data) {
-      log('📊 Raw database data:', data);
+      log('Raw database data:', data);
 
       // Handle scratched categories
       const scratchedCategories = data.scratched_categories || [];
@@ -297,14 +296,12 @@ export async function loadGameState(gameId: string, playerName: string) {
         },
         yahtzeBonusCount: data.yahtzee_bonus_count || 0
       }));
-
-      console.log('✅ Game state loaded and updated');
     } else {
-      log('ℹ️ No existing game state found (new player)');
+      log('ℹNo existing game state found (new player)');
     }
 
   } catch (error) {
-    log('❌ Failed to load game state:', error);
+    log('Failed to load game state:', error);
     throw error;
   }
 }
@@ -369,7 +366,7 @@ export async function saveGameState(state: GameState) {
     log('✅ Game state saved');
 
   } catch (error) {
-    log('❌ Failed to save game state:', error);
+    log('Failed to save game state:', error);
     // Don't throw - we don't want to break the UI for save failures
   }
 }
@@ -417,7 +414,7 @@ export async function fetchGamePlayers(gameId: string) {
     return result;
 
   } catch (error) {
-    log('❌ Failed to fetch game players:', error);
+    log('Failed to fetch game players:', error);
     throw error;
   }
 }
