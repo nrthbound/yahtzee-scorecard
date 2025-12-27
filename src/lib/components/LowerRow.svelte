@@ -71,7 +71,8 @@
       >
         <div class="flex items-center justify-center">
           {#if value === true}
-            <span class="text-sm font-medium">✓ {fixedValue}</span>
+            <!-- <span class="text-sm font-medium">{fixedValue}</span> -->
+            <span class="text-sm font-medium">✓</span>
           {:else}
             <span class="text-sm text-gray-500">—</span>
           {/if}

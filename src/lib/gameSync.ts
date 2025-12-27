@@ -52,12 +52,62 @@ export function cleanupGameSubscription() {
   }
 }
 
-// Create a new game session
-export async function createGame(createdBy: string) {
+// Generate a random 6-digit game ID
+function generateGameId(): string {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+// Check if a game ID already exists
+async function isGameIdTaken(gameId: string): Promise<boolean> {
   try {
+    const { data, error } = await supabase
+      .from('games')
+      .select('id')
+      .eq('id', gameId)
+      .single();
+
+    if (error && error.code === 'PGRST116') {
+      // PGRST116 = not found, which means ID is available
+      return false;
+    }
+
+    return !!data; // If data exists, ID is taken
+  } catch {
+    return true; // Assume taken on error to be safe
+  }
+}
+
+// Create a new game session
+export async function createGame(createdBy: string, customGameId?: string) {
+  try {
+    let gameId = customGameId;
+
+    // If no custom ID provided, generate a unique 6-digit code
+    if (!gameId) {
+      let attempts = 0;
+      do {
+        gameId = generateGameId();
+        attempts++;
+        if (attempts > 10) {
+          throw new Error('Unable to generate unique game ID. Please try again.');
+        }
+      } while (await isGameIdTaken(gameId));
+    } else {
+      // Validate custom game ID
+      if (!/^[a-zA-Z0-9]{3,12}$/.test(gameId)) {
+        throw new Error('Game ID must be 3-12 characters long and contain only letters and numbers');
+      }
+
+      // Check if custom ID is already taken
+      if (await isGameIdTaken(gameId)) {
+        throw new Error(`Game ID "${gameId}" is already taken. Please choose another.`);
+      }
+    }
+
     const { data: gameData, error: gameError } = await supabase
       .from('games')
       .insert({
+        id: gameId,
         created_by: createdBy,
         status: 'active'
       })

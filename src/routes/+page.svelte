@@ -8,6 +8,7 @@
 
   let playerName = $state('Travis');
   let gameIdToJoin = $state('');
+  let customGameId = $state(''); // New: custom game ID input
   let isLoading = $state(false);
   let errorMessage = $state('');
   let successMessage = $state('');
@@ -50,13 +51,13 @@
 
     try {
       isLoading = true;
-      const gameId = await createGame(playerName.trim());
+      const gameId = await createGame(playerName.trim(), customGameId.trim() || undefined);
       // Store player name for the game route
       localStorage.setItem('yahtzee_player_name', playerName.trim());
       // Redirect to the game page
       goto(`/game/${gameId}`);
     } catch (error) {
-      showMessage(`Failed to create game: ${error instanceof Error ? error.message : 'Unknown error'}`, true);
+      showMessage(`❌ ${error instanceof Error ? error.message : 'Unknown error'}`, true);
     } finally {
       isLoading = false;
     }
@@ -110,67 +111,96 @@
       </div>
     {/if}
 
-    <div class="flex gap-4 items-end mb-4">
-      <div>
-        <label for="playerName" class="block text-sm font-medium mb-1">Your Name</label>
-        <input
-          id="playerName"
-          bind:value={playerName}
-          disabled={isLoading}
-          class="px-3 py-2 border rounded disabled:bg-gray-100"
-          placeholder="Enter your name"
-        />
-      </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <!-- Create Game Section -->
+      <div class="bg-white rounded-lg p-4 border">
+        <h3 class="font-semibold text-gray-800 mb-3">🎮 Create New Game</h3>
 
-      <button
-        onclick={handleCreateGame}
-        disabled={isLoading}
-        class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
-      >
-        {isLoading ? 'Loading...' : ''} New Game
-      </button>
-    </div>
+        <div class="space-y-3">
+          <div>
+            <label for="playerName" class="block text-sm font-medium mb-1">Your Name</label>
+            <input
+              id="playerName"
+              bind:value={playerName}
+              disabled={isLoading}
+              class="w-full px-3 py-2 border rounded disabled:bg-gray-100"
+              placeholder="Enter your name"
+            />
+          </div>
 
-    <div class="flex gap-4 items-end mb-4">
-      <div>
-        <label for="gameIdInput" class="block text-sm font-medium mb-1">Game ID</label>
-        <input
-          id="gameIdInput"
-          bind:value={gameIdToJoin}
-          disabled={isLoading}
-          class="px-3 py-2 border rounded disabled:bg-gray-100"
-          placeholder="Enter game ID to join"
-        />
-      </div>
+          <div>
+            <label for="customGameId" class="block text-sm font-medium mb-1">
+              Custom Game ID
+              <span class="text-gray-500 text-xs">(optional - leave blank for auto-generated)</span>
+            </label>
+            <input
+              id="customGameId"
+              bind:value={customGameId}
+              disabled={isLoading}
+              class="w-full px-3 py-2 border rounded disabled:bg-gray-100"
+              placeholder="e.g. FAMILY2024 or leave blank"
+              maxlength="12"
+            />
+            <p class="text-xs text-gray-500 mt-1">3-12 characters, letters and numbers only</p>
+          </div>
 
-      <button
-        onclick={handleJoinGame}
-        disabled={isLoading}
-        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
-      >
-        {isLoading ? 'Loading...' : ''} Join Game
-      </button>
-    </div>
-
-    <div class="flex gap-2">
-      <!-- <button
-        onclick={handleTestConnection}
-        disabled={isLoading}
-        class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
-      >
-        {isLoading ? '⏳' : '🔧'} Test Connection
-      </button> -->
-
-      {#if state.gameId}
-        <div class="px-3 py-2 bg-white rounded border text-sm flex items-center space-x-2">
-          <span class="text-green-600">🟢</span>
-          <span>Game: <code class="bg-gray-100 px-1 rounded">{state.gameId}</code></span>
-          <span>|</span>
-          <span>Player: <strong>{state.playerName}</strong></span>
-          <span class="text-blue-600 text-xs">(Auto-saving)</span>
+          <button
+            onclick={handleCreateGame}
+            disabled={isLoading}
+            class="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            {isLoading ? '⏳ Creating...' : '🎮 Create Game'}
+          </button>
         </div>
-      {/if}
+      </div>
+
+      <!-- Join Game Section -->
+      <div class="bg-white rounded-lg p-4 border">
+        <h3 class="font-semibold text-gray-800 mb-3">🎯 Join Existing Game</h3>
+
+        <div class="space-y-3">
+          <div>
+            <label for="playerNameJoin" class="block text-sm font-medium mb-1">Your Name</label>
+            <input
+              id="playerNameJoin"
+              bind:value={playerName}
+              disabled={isLoading}
+              class="w-full px-3 py-2 border rounded disabled:bg-gray-100"
+              placeholder="Enter your name"
+            />
+          </div>
+
+          <div>
+            <label for="gameIdInput" class="block text-sm font-medium mb-1">Game ID</label>
+            <input
+              id="gameIdInput"
+              bind:value={gameIdToJoin}
+              disabled={isLoading}
+              class="w-full px-3 py-2 border rounded disabled:bg-gray-100"
+              placeholder="Enter game ID to join"
+            />
+          </div>
+
+          <button
+            onclick={handleJoinGame}
+            disabled={isLoading}
+            class="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            {isLoading ? '⏳ Joining...' : '🎯 Join Game'}
+          </button>
+        </div>
+      </div>
     </div>
+
+    {#if state.gameId}
+      <div class="bg-white rounded-lg p-3 border flex items-center justify-center space-x-2 text-sm">
+        <span class="text-green-600">🟢</span>
+        <span>Active Game: <code class="bg-gray-100 px-2 py-1 rounded font-mono">{state.gameId}</code></span>
+        <span>|</span>
+        <span>Player: <strong>{state.playerName}</strong></span>
+        <span class="text-blue-600 text-xs">(Auto-saving)</span>
+      </div>
+    {/if}
   </div>
 </div>
 

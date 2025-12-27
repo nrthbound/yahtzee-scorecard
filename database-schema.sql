@@ -1,6 +1,6 @@
 -- Games table - each game session
 CREATE TABLE games (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  id TEXT PRIMARY KEY,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
   created_by TEXT NOT NULL, -- Player name who created the game
   status TEXT DEFAULT 'active' CHECK (status IN ('active', 'completed')),
@@ -11,7 +11,7 @@ CREATE TABLE games (
 -- Players in games - who's playing in each game
 CREATE TABLE game_players (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  game_id UUID REFERENCES games(id) ON DELETE CASCADE,
+  game_id TEXT REFERENCES games(id) ON DELETE CASCADE,
   player_name TEXT NOT NULL,
   joined_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
   UNIQUE(game_id, player_name)
@@ -20,7 +20,7 @@ CREATE TABLE game_players (
 -- Game scores - individual category scores for each player
 CREATE TABLE game_scores (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  game_id UUID REFERENCES games(id) ON DELETE CASCADE,
+  game_id TEXT REFERENCES games(id) ON DELETE CASCADE,
   player_name TEXT NOT NULL,
 
   -- Upper section scores
@@ -31,7 +31,7 @@ CREATE TABLE game_scores (
   fives INTEGER,
   sixes INTEGER,
 
-  -- Lower section scores (using JSONB for flexibility with different value types)
+  -- Lower section scores
   three_of_a_kind INTEGER,
   four_of_a_kind INTEGER,
   full_house BOOLEAN,

@@ -32,15 +32,15 @@ export interface GameState {
   yahtzeBonusCount?: number;
 }
 
-// Initial state - all categories start as null (unplayed)
+// Initial state - upper categories start as 0 (default selected), lower as null
 const initialState: GameState = {
   upper: {
-    ones: null,
-    twos: null,
-    threes: null,
-    fours: null,
-    fives: null,
-    sixes: null,
+    ones: 0,
+    twos: 0,
+    threes: 0,
+    fours: 0,
+    fives: 0,
+    sixes: 0,
   },
   lower: {
     threeOfAKind: null,
