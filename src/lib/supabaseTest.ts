@@ -16,7 +16,7 @@ export async function testSupabaseConnection() {
       .single();
 
     if (gameError) throw gameError;
-    console.log('✅ Game created:', gameData);
+    console.log('Game created:', gameData); // Dev Only
 
     // Test 2: Add a player to the game
     const { data: playerData, error: playerError } = await supabase

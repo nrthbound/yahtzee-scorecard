@@ -93,7 +93,7 @@ export async function createGame(createdBy: string) {
     // Setup real-time subscription
     setupGameSubscription(gameData.id, createdBy);
 
-    log('✅ Game created:', gameData.id);
+    log('Game created:', gameData.id);
     return gameData.id;
 
   } catch (error) {
