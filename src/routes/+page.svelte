@@ -112,9 +112,9 @@
     {/if}
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-      <!-- Create Game Section -->
+
       <div class="bg-white rounded-lg p-4 border">
-        <h3 class="font-semibold text-gray-800 mb-3">🎮 Create New Game</h3>
+        <h3 class="font-semibold text-gray-800 mb-3">New Game</h3>
 
         <div class="space-y-3">
           <div>
@@ -149,7 +149,7 @@
             disabled={isLoading}
             class="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
-            {isLoading ? '⏳ Creating...' : '🎮 Create Game'}
+            {isLoading ? 'Creating...' : 'Create Game'}
           </button>
         </div>
       </div>
@@ -186,7 +186,7 @@
             disabled={isLoading}
             class="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
-            {isLoading ? '⏳ Joining...' : '🎯 Join Game'}
+            {isLoading ? 'Joining...' : 'Join Game'}
           </button>
         </div>
       </div>
