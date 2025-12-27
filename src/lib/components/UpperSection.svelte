@@ -7,8 +7,19 @@
   const state = $derived($gameState);
   const upper = $derived(state.upper);
   const score = $derived(calculateUpper(upper));
+
+  // Check if all upper section categories are filled (either scored > 0 or scratched)
+  const isUpperSectionComplete = $derived(
+    Object.values(upper).every(value =>
+      value === 'scratch' || (typeof value === 'number' && value > 0)
+    )
+  );
 </script>
-<div class="bg-white max-w-2xl mx-auto p-6 rounded-lg shadow-lg space-y-4">
+<div class="bg-white max-w-2xl mx-auto p-6 rounded-lg shadow-lg space-y-4 transition-all duration-300 {
+  isUpperSectionComplete
+    ? 'ring-4 ring-blue-400 ring-opacity-50 border-2 border-blue-400'
+    : 'border border-gray-200'
+}">
   <div class="heading border-b-2 border-gray-200/40 pb-4">
     <h1 class="text-xl font-bold">Yahtzee</h1>
   </div>

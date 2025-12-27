@@ -4,6 +4,7 @@
   import { createGame, joinGame, cleanupGameSubscription } from "$lib/gameSync";
   import { gameState } from "$lib/stores/gameStore";
   import { onDestroy } from 'svelte';
+  import { goto } from '$app/navigation';
 
   let playerName = $state('Travis');
   let gameIdToJoin = $state('');
@@ -50,7 +51,10 @@
     try {
       isLoading = true;
       const gameId = await createGame(playerName.trim());
-      showMessage(`🎮 Game created! Share this ID: ${gameId}`);
+      // Store player name for the game route
+      localStorage.setItem('yahtzee_player_name', playerName.trim());
+      // Redirect to the game page
+      goto(`/game/${gameId}`);
     } catch (error) {
       showMessage(`Failed to create game: ${error instanceof Error ? error.message : 'Unknown error'}`, true);
     } finally {
@@ -71,9 +75,12 @@
 
     try {
       isLoading = true;
-      await joinGame(gameIdToJoin.trim(), playerName.trim());
-      showMessage(`🎯 Successfully joined game!`);
+      // Store player name for the game route
+      localStorage.setItem('yahtzee_player_name', playerName.trim());
+      // Redirect to the game page
+      goto(`/game/${gameIdToJoin.trim()}`);
     } catch (error) {
+      showMessage(`❌ Failed to join game: ${error instanceof Error ? error.message : 'Unknown error'}`, true);
       showMessage(`Failed to join game: ${error instanceof Error ? error.message : 'Unknown error'}`, true);
     } finally {
       isLoading = false;
