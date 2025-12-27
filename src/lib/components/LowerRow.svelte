@@ -94,7 +94,7 @@
 
   <!-- Score display -->
   <div class="score">
-    <div class="bg-gray-200 inline-flex w-10 h-10 justify-center items-center rounded-md">
+    <div class="bg-gray-200 inline-flex h-8 w-8 sm:w-10 sm:h-10 justify-center items-center rounded-md text-sm sm:text-base">
       {score}
     </div>
   </div>

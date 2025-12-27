@@ -104,7 +104,7 @@
             disabled={isLoading || !playerName.trim()}
             class="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
-            {isLoading ? '⏳ Joining...' : '🎯 Join Game'}
+            {isLoading ? 'Joining...' : 'Join Game'}
           </button>
         </div>
       </div>
@@ -120,7 +120,7 @@
           onclick={() => goto('/')}
           class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
         >
-          🏠 Go Home
+          Go Home
         </button>
       </div>
     </div>

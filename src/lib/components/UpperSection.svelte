@@ -17,7 +17,7 @@
 </script>
 <div class="bg-white max-w-2xl mx-auto p-6 rounded-lg shadow-lg space-y-4 transition-all duration-300 {
   isUpperSectionComplete
-    ? 'ring-4 ring-blue-400 ring-opacity-50 border-2 border-blue-400'
+    ? 'border border-blue-400'
     : 'border border-gray-200'
 }">
   <div class="heading border-b-2 border-gray-200/40 pb-4">
@@ -25,36 +25,36 @@
   </div>
   <div class="flex flex-col">
   <UpperRow
-    label="Ones"
+    label="1's"
     faceValue={1}
     value={upper.ones}
     onChange={(v) => updateUpperCategory('ones', v)}
   />
   <UpperRow
-    label="Twos"
+    label="2's"
     faceValue={2}
     value={upper.twos}
     onChange={(v) => updateUpperCategory('twos', v)}
   />
   <UpperRow
-    label="Threes"
+    label="3's"
     faceValue={3}
     value={upper.threes}
     onChange={(v) => updateUpperCategory('threes', v)}
   />
   <UpperRow
-    label="Fours"
+    label="4's"
     faceValue={4}
     value={upper.fours}
     onChange={(v) => updateUpperCategory('fours', v)} />
   <UpperRow
-    label="Fives"
+    label="5's"
     faceValue={5}
     value={upper.fives}
     onChange={(v) => updateUpperCategory('fives', v)}
   />
   <UpperRow
-    label="Sixes"
+    label="6's"
     faceValue={6}
     value={upper.sixes}
     onChange={(v) => updateUpperCategory('sixes', v)}

@@ -100,8 +100,8 @@
 </script>
 
 {#if state.gameId}
-  <div class="bg-white rounded-lg shadow-md p-4">
-    <div class="flex items-center justify-between mb-4">
+  <div class="bg-white max-w-2xl mx-auto p-6 rounded-lg shadow-lg space-y-4">
+    <div class="flex items-center justify-between">
       <h3 class="text-lg font-semibold text-gray-800">Players in Game</h3>
       <button
         onclick={fetchPlayersForGame}

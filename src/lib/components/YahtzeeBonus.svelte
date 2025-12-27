@@ -53,19 +53,17 @@
   }
 </script>
 
-<div class="rounded-lg p-4 bg-white shadow-md mt-6">
-  <h3 class="text-lg font-semibold text-yellow-800 mb-3 flex items-center">
-    Yahtzee Bonus
-  </h3>
+<div class="bg-white max-w-2xl mx-auto p-6 rounded-lg shadow-lg space-y-4 mt-6 {canScoreBonus ? 'block' : 'hidden'}">
+  <h3 class="text-lg font-semibold text-gray-800">Yahtzee Bonus</h3>
 
   <div class="space-y-3">
-    <div class="text-sm text-gray-600">
+    <!-- <div class="text-sm text-gray-600">
       {#if !canScoreBonus}
         <p class="italic">Score a Yahtzee first to unlock bonuses!</p>
       {:else}
         <p>Each additional Yahtzee earns a 100-point bonus</p>
       {/if}
-    </div>
+    </div> -->
 
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-4">
@@ -96,10 +94,10 @@
       </div>
     </div>
 
-    {#if bonusCount > 0}
+    <!-- {#if bonusCount > 0}
       <div class="text-xs text-gray-500">
         Note: When scoring additional Yahtzees, you may choose to score them in any open upper section category or as a chance.
       </div>
-    {/if}
+    {/if} -->
   </div>
 </div>
