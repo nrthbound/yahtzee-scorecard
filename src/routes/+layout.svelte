@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
-<div class="max-w-6xl mx-auto py-4 flex">
+<div class="max-w-6xl mx-auto py-4 px-4 md:px-0 flex">
 	<a href="/" title="Yahti.app">
 		<svg width="84" height="14" viewBox="0 0 84 14" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<path d="M0 0H3.93555L7.00195 5.05859L10.1172 0H13.877L8.56445 8.33008V13.2617H5.35156V8.33008L0 0Z" fill="#222222"/>

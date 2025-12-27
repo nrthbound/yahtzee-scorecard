@@ -133,9 +133,9 @@
       </div>
     {/if}
 
-    <div class="mb-6 max-w-2xl mx-auto">
+    <div class="mb-6 px-4 md:px-0 mt-4 max-w-2xl mx-auto">
 
-      <div class="bg-white shadow-lg p-4 rounded-md">
+      <div class="bg-white shadow-xl p-4 rounded-md">
         <h3 class=" text-gray-800 mb-3">New Game</h3>
 
         <div class="space-y-5">
