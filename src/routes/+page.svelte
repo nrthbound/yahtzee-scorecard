@@ -31,18 +31,6 @@
     }, 5000);
   }
 
-  // async function handleTestConnection() {
-  //   try {
-  //     isLoading = true;
-  //     const gameId = await testSupabaseConnection();
-  //     showMessage(`Connection successful! Test game: ${gameId}`);
-  //   } catch (error) {
-  //     showMessage(`Connection failed: ${error instanceof Error ? error.message : 'Unknown error'}`, true);
-  //   } finally {
-  //     isLoading = false;
-  //   }
-  // }
-
   async function handleCreateGame() {
     if (!playerName.trim()) {
       showMessage('Please enter your name first', true);
@@ -241,4 +229,3 @@
     <p class="text-gray-600 mb-6">Create a new game or join an existing one to get started!</p>
   </div>
 {/if}
-
