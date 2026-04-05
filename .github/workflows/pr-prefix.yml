@@ -1,34 +1,21 @@
-name: Autoprefix PR Title
-on: 
+name: Auto-prefix PR Title
+
+on:
   pull_request:
     types: [opened, reopened, edited, synchronize]
 
 jobs:
   prefix-title:
     runs-on: ubuntu-latest
-    permissions: 
+    permissions:
       pull-requests: write
+
     steps:
-      - name: Add prefix to PR  label
+      - uses: actions/checkout@v4
+
+      - name: Add prefix to PR title
         uses: actions/github-script@v7
         with:
           script: |
-            const pr = context.payload.pull_request;
-            const branch = pr.head.ref;
-            const currentTitle = pr.title;
-
-            let prefix = null;
-
-            if (branch.startsWith('feat/')) prefix = '[Feature]';
-            else if (branch.startsWith('fix/') prefix = '[Fix]';
-            else if (branch.startsWith('bug/') prefix = '[Bug]';
-
-            if (prefix && !currentTitle.startsWith(prefix)) {
-              await github.rest.pulls.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: pr.number,
-                title: `${prefix} ${currentTitle}`
-              });
-              console.log(`Updated title to: ${prefix} ${currentTitle}`);
-            }
+            const fn = require('./.github/scripts/prefix-pr-title.js');
+            await fn({ github, context });
