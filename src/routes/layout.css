@@ -3,10 +3,24 @@
 @plugin '@tailwindcss/typography';
 
 @theme {
-  --color-primary: #FBB969;
-  --color-primary-dark: #A05800;
+	--color-background: #f2f4f8;
+	--color-surface: #ffffff;
+	--color-surface-alt: #e8ecf4;
+	--color-accent: #004dff;
+	--color-accent-soft: #e6ecff;
+	--color-accent-dark: #0038cc;
+	--color-ink: #0d1117;
+	--color-ink-muted: #5a6070;
+	--color-ink-faint: #a8aebb;
+	--color-score: #0891b2;
+	--color-score-soft: #e0f5fa;
+	--color-pop: #00c896;
+	--color-pop-soft: #dffaf2;
+	--color-border: #dde2ed;
+	--color-border-focus: #004dff;
+	--color-primary-dark: #a05800;
 }
 
 * {
-  font-family: 'Poppins', sans-serif;
+	font-family: 'Poppins', sans-serif;
 }
